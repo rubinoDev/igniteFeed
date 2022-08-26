@@ -1,11 +1,28 @@
 import { format, formatDistanceToNow } from 'date-fns'
 import ptBR from 'date-fns/locale/pt-BR'
-import { useState } from 'react'
+import { ChangeEvent, FormEvent, InvalidEvent, useState } from 'react'
 import { Avatar } from '../Avatar/Avatar'
 import { Comment } from '../Comments/Comment'
 import styles from './Post.module.css'
 
-export function Post({author, content, publishedAt}){
+interface Author{
+  avatarUrl: string;
+  name: string;
+  role: string;
+}
+
+interface Content{
+  type: 'paragraph' | 'link';
+  content: string;
+}
+
+interface PostProps{
+  author: Author;
+  publishedAt : Date;
+  content: Content[];
+}
+
+export function Post({author, content, publishedAt}:PostProps){
   const[comments,setComments] = useState([
     'Muito daora!',
   ])
@@ -22,13 +39,13 @@ export function Post({author, content, publishedAt}){
     addSuffix: true
   }) 
 
-  function handleRemoveComment(commentToDelete){
+  function handleRemoveComment(commentToDelete: string){
     const commentsWithoutDeletedOne = comments.filter(comment => comment !== commentToDelete)
 
     setComments(commentsWithoutDeletedOne)
   }
 
-  function handleAddNewComment(){
+  function handleAddNewComment(event:FormEvent){
     event.preventDefault()
 
     if(newComment === ''){
@@ -40,12 +57,12 @@ export function Post({author, content, publishedAt}){
 
   }
 
-  function handleNewCommentChange(){
+  function handleNewCommentChange(event:ChangeEvent<HTMLTextAreaElement>){
     event.target.setCustomValidity('')
     setNewComment(event.target.value)
   }
 
-  function handleInvalidComment(){
+  function handleInvalidComment(event:InvalidEvent<HTMLTextAreaElement>){
     event.target.setCustomValidity('Esse campo é obrigatório!')
   }
 
